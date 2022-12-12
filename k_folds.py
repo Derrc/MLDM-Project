@@ -2,7 +2,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch
 import torchvision
-from dataset import SLDataset
 from torch.utils.data import DataLoader, random_split, ConcatDataset
 import os
 import numpy as np
@@ -11,8 +10,8 @@ from models import CNN, CNNDropout, FeedForwardNN
 
 # refactor to train models as needed
 def main():
-    models = [CNN(), CNNDropout(), FeedForwardNN()]
-    PATHS = ['./k_folds_models/cnn.pth', './k_folds_models/cnn_dropout.pth', './k_folds_models/ffnn.pth']
+    models = [CNN(), CNNDropout(0.3), FeedForwardNN(2, [128, 128])]
+    PATHS = ['./models_k_folds/cnn.pth', './models_k_folds/cnn_dropout.pth', './models_k_folds/ffnn.pth']
     for i, model in enumerate(models):
         # load model if exists
         if os.path.exists(PATHS[i]):

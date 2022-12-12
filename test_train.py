@@ -11,7 +11,7 @@ from utils import train, test, test_train_split
 # refactor to train models as needed
 def main():
     models = [CNN(), CNNDropout(0.3), FeedForwardNN(2, [128, 128])]
-    PATHS = ['./test_train_models/cnn.pth', './test_train_models/cnn_dropout.pth', './test_train_models/ffnn.pth']
+    PATHS = ['./models_test_train/cnn.pth', './models_test_train/cnn_dropout.pth', './models_test_train/ffnn.pth']
     epochs = 5
 
     trainloader, testloader = test_train_split(16) # batch size
