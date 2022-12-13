@@ -9,6 +9,7 @@ from models import CNN
 
 # train function
 def train(epochs, model, trainloader, optim, criterion, PATH):
+    print("Training Model\n[<epoch>, <iteration>] loss = <average loss>")
     model.train()
     for e in range(epochs):
         iterations = 100
