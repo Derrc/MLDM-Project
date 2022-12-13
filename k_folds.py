@@ -17,13 +17,8 @@ def main():
         "./models_k_folds/ffnn.pth",
     ]
     for i, model in enumerate(models):
-        # load model if exists
-        if os.path.exists(PATHS[i]):
-            model.load_state_dict(torch.load(PATHS[i]))
-        optim = torch.optim.Adam(model.parameters(), lr=1e-3)
-        criterion = nn.CrossEntropyLoss()
         mean_accuracy = k_folds_cross_validation(
-            4, 16, model, optim, criterion, PATHS[i]
+            4, 16, model, PATHS[i]
         )
         print(mean_accuracy)
 

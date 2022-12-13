@@ -5,6 +5,7 @@ import torchvision
 from dataset import SLDataset
 from torch.utils.data import DataLoader, random_split, ConcatDataset
 import numpy as np
+from models import CNN
 
 # train function
 def train(epochs, model, trainloader, optim, criterion, PATH):
@@ -51,7 +52,6 @@ def test(model, testloader):
         total += labels.size(0)
 
     accuracy = correct / total
-    print(f"Accuracy over test set: {accuracy:.3f}")
     return accuracy
 
 
@@ -68,7 +68,7 @@ def test_train_split(batch_size):
     return trainloader, testloader
 
 
-def k_folds_cross_validation(k, batch_size, model, optim, criterion, PATH):
+def k_folds_cross_validation(k, batch_size, model, PATH):
     transforms = torchvision.transforms.Compose(
         [torchvision.transforms.ToTensor(), torchvision.transforms.Normalize(0.5, 0.5)]
     )
@@ -91,11 +91,14 @@ def k_folds_cross_validation(k, batch_size, model, optim, criterion, PATH):
         testloader = DataLoader(validation_data, batch_size=batch_size, shuffle=True)
 
         # initialize new model every fold
-        new_model = model
-        optim = torch.optim.Adam(new_model.parameters(), lr=1e-3)
+        for layer in model.children():
+            if hasattr(layer, 'reset_parameters'):
+                layer.reset_parameters()
+        optim = torch.optim.Adam(model.parameters(), lr=1e-3)
         criterion = nn.CrossEntropyLoss()
 
-        train(5, model, trainloader, optim, criterion, PATH)
+        # train and test for every fold
+        train(1, model, trainloader, optim, criterion, PATH)
         accuracy = test(model, testloader)
         accuracies.append(accuracy)
         print(f'Fold {fold+1} Accuracy: {accuracy}')
