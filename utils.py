@@ -90,7 +90,14 @@ def k_folds_cross_validation(k, batch_size, model, optim, criterion, PATH):
         trainloader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
         testloader = DataLoader(validation_data, batch_size=batch_size, shuffle=True)
 
-        train(1, model, trainloader, optim, criterion, PATH)
-        accuracies.append(test(model, testloader))
+        # initialize new model every fold
+        new_model = model
+        optim = torch.optim.Adam(new_model.parameters(), lr=1e-3)
+        criterion = nn.CrossEntropyLoss()
+
+        train(5, model, trainloader, optim, criterion, PATH)
+        accuracy = test(model, testloader)
+        accuracies.append(accuracy)
+        print(f'Fold {fold+1} Accuracy: {accuracy}')
 
     return np.mean(accuracies)
