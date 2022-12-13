@@ -37,7 +37,20 @@ if __name__ == "__main__":
 # CNN using Adam Optimizer and standard layers (2 conv, 1 pool, 1 fully-connected)
 # Over 4 epochs using 4-Folds Cross-Validation
 # average loss -> 0.000
-# mean accuracy over validation sets -> 0.999
-# accuracy on given testset = 100%
+# mean accuracy over validation sets -> 1.000
+# accuracy on given test set = 100%
 
 # CNN using Adam Optimizer and standard layers (2 conv, 1 pool, 1 fully-connected, 1 dropout(p=?))
+# Over 4 epochs using 4-Fold Cross-Validation
+# average loss over each epoch -> 0.35, 0.05, 0.03, 0.02
+# mean accuracy over validation sets -> .990
+# accuracy on given test set = 98.69%
+
+# FFNN using Adam Optimizer with 2 hidden layers, each 128 nodes tall
+# Over 4 epochs using 4-Fold Cross-Validation
+# average loss over each epoch -> 2.1, 1.7, 1.7, 1.63
+# mean accuracy over validation sets -> 0.541
+# accuracy on given test set = 52%
+
+# I'm going to train this one for more epochs... and see what happens
+# nothing, nothing happened. It made no significant progress after 52% accuracy
