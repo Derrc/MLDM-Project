@@ -30,8 +30,8 @@ def train(epochs, model, trainloader, optim, criterion, PATH):
             optim.zero_grad()
 
             running_loss += loss
-            if i % iterations == iterations-1:
-                print(f'[{e+1}, {i+1}] loss = {running_loss / iterations:.3f}')
+            if i % iterations == iterations - 1:
+                print(f"[{e+1}, {i+1}] loss = {running_loss / iterations:.3f}")
                 running_loss = 0.0
 
         # save after each epoch
@@ -51,13 +51,14 @@ def test(model, testloader):
         total += labels.size(0)
 
     accuracy = correct / total
-    print(f'Accuracy over test set: {accuracy:.3f}')
+    print(f"Accuracy over test set: {accuracy:.3f}")
     return accuracy
 
 
 def test_train_split(batch_size):
-    transforms = torchvision.transforms.Compose([torchvision.transforms.ToTensor(), 
-                                        torchvision.transforms.Normalize(0.5, 0.5)])
+    transforms = torchvision.transforms.Compose(
+        [torchvision.transforms.ToTensor(), torchvision.transforms.Normalize(0.5, 0.5)]
+    )
     train_data = SLDataset(transform=transforms, train=True)
     test_data = SLDataset(transform=transforms, train=False)
 
@@ -68,15 +69,23 @@ def test_train_split(batch_size):
 
 
 def k_folds_cross_validation(k, batch_size, model, optim, criterion, PATH):
-    transforms = torchvision.transforms.Compose([torchvision.transforms.ToTensor(), 
-                                        torchvision.transforms.Normalize(0.5, 0.5)])
-    total_dataset = ConcatDataset([SLDataset(transform=transforms, train=True), SLDataset(transform=transforms, train=False)])
+    transforms = torchvision.transforms.Compose(
+        [torchvision.transforms.ToTensor(), torchvision.transforms.Normalize(0.5, 0.5)]
+    )
+    total_dataset = ConcatDataset(
+        [
+            SLDataset(transform=transforms, train=True),
+            SLDataset(transform=transforms, train=False),
+        ]
+    )
 
     # train, number of iterations through dataset, using k-folds cross validation
-    datasets = random_split(total_dataset, [1/k] * k)
+    datasets = random_split(total_dataset, [1 / k] * k)
     accuracies = []
     for fold in range(k):
-        train_data = ConcatDataset([datasets[i] for i in range(len(datasets)) if i != fold])
+        train_data = ConcatDataset(
+            [datasets[i] for i in range(len(datasets)) if i != fold]
+        )
         validation_data = datasets[fold]
         trainloader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
         testloader = DataLoader(validation_data, batch_size=batch_size, shuffle=True)
@@ -85,5 +94,3 @@ def k_folds_cross_validation(k, batch_size, model, optim, criterion, PATH):
         accuracies.append(test(model, testloader))
 
     return np.mean(accuracies)
-
-

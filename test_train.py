@@ -11,10 +11,14 @@ from utils import train, test, test_train_split
 # refactor to train models as needed
 def main():
     models = [CNN(), CNNDropout(0.3), FeedForwardNN(2, [128, 128])]
-    PATHS = ['./models_test_train/cnn.pth', './models_test_train/cnn_dropout.pth', './models_test_train/ffnn.pth']
+    PATHS = [
+        "./models_test_train/cnn.pth",
+        "./models_test_train/cnn_dropout.pth",
+        "./models_test_train/ffnn.pth",
+    ]
     epochs = 5
 
-    trainloader, testloader = test_train_split(16) # batch size
+    trainloader, testloader = test_train_split(16)  # batch size
     for i, model in enumerate(models):
         # load model if exists
         if os.path.exists(PATHS[i]):
@@ -24,9 +28,9 @@ def main():
         train(epochs, model, trainloader, optim, criterion, PATHS[i])
         accuracy = test(model, testloader)
         print(accuracy)
-        
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
 
 
