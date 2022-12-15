@@ -11,6 +11,7 @@ from models import CNN
 def train(epochs, model, trainloader, optim, criterion, PATH):
     print("Training Model\n[<epoch>, <iteration>] loss = <average loss>")
     model.train()
+    losses = []
     for e in range(epochs):
         iterations = 100
         running_loss = 0.0
@@ -34,10 +35,12 @@ def train(epochs, model, trainloader, optim, criterion, PATH):
             running_loss += loss
             if i % iterations == iterations - 1:
                 print(f"[{e+1}, {i+1}] loss = {running_loss / iterations:.3f}")
+                losses.append(round(running_loss.item() / iterations, 3))
                 running_loss = 0.0
 
         # save after each epoch
         torch.save(model.state_dict(), PATH)
+    return losses
 
 
 # test function
@@ -83,6 +86,7 @@ def k_folds_cross_validation(k, batch_size, model, PATH):
     # train, number of iterations through dataset, using k-folds cross validation
     datasets = random_split(total_dataset, [1 / k] * k)
     accuracies = []
+    losses = []
     for fold in range(k):
         train_data = ConcatDataset(
             [datasets[i] for i in range(len(datasets)) if i != fold]
@@ -99,9 +103,10 @@ def k_folds_cross_validation(k, batch_size, model, PATH):
         criterion = nn.CrossEntropyLoss()
 
         # train and test for every fold
-        train(1, model, trainloader, optim, criterion, PATH)
+        loss = train(1, model, trainloader, optim, criterion, PATH)
+        losses.extend(loss)
         accuracy = test(model, testloader)
         accuracies.append(accuracy)
         print(f'Fold {fold+1} Accuracy: {accuracy}')
 
-    return np.mean(accuracies)
+    return np.mean(accuracies), losses

@@ -7,6 +7,7 @@ import os
 import numpy as np
 from utils import k_folds_cross_validation
 from models import CNN, CNNDropout, FeedForwardNN
+import matplotlib.pyplot as plt
 
 # refactor to train models as needed
 def main():
@@ -16,10 +17,17 @@ def main():
         "./models_k_folds/cnn_dropout.pth",
         "./models_k_folds/ffnn.pth",
     ]
-    for i, model in enumerate(models):
-        mean_accuracy = k_folds_cross_validation(4, 16, model, PATHS[i])
-        print(f"Mean Test Accuracy: {mean_accuracy}")
+    legend = ["CNN", "CNN dropout", "FFNN"]
 
+    for i, model in enumerate(models):
+        mean_accuracy, losses = k_folds_cross_validation(4, 16, model, PATHS[i])
+        plt.plot(losses)
+        print(f"Mean Test Accuracy: {mean_accuracy}")
+    plt.ylabel('Loss')
+    plt.tick_params(axis='x', which='both', bottom=False, top=False)
+    plt.legend(legend)
+    plt.savefig('./loss_plots/kfolds.png')
+    plt.show()
 
 if __name__ == "__main__":
     main()

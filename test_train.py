@@ -7,6 +7,7 @@ import os
 import numpy as np
 from models import CNN, CNNDropout, FeedForwardNN
 from utils import train, test, test_train_split
+import matplotlib.pyplot as plt
 
 # refactor to train models as needed
 def main():
@@ -16,6 +17,7 @@ def main():
         "./models_test_train/cnn_dropout.pth",
         "./models_test_train/ffnn.pth",
     ]
+    legend = ["CNN", "CNN dropout", "FFNN"]
     epochs = 5
 
     trainloader, testloader = test_train_split(16)  # batch size
@@ -25,9 +27,16 @@ def main():
             model.load_state_dict(torch.load(PATHS[i]))
         optim = torch.optim.Adam(model.parameters(), lr=1e-3)
         criterion = nn.CrossEntropyLoss()
-        train(epochs, model, trainloader, optim, criterion, PATHS[i])
+        losses = train(epochs, model, trainloader, optim, criterion, PATHS[i])
         accuracy = test(model, testloader)
+        plt.plot(losses)
         print(accuracy)
+    plt.ylabel('Loss')
+    plt.tick_params(axis='x', which='both', bottom=False, top=False)
+    plt.legend(legend)
+    plt.savefig('./loss_plots/train_test.png')
+    plt.show()
+
 
 
 if __name__ == "__main__":
@@ -48,5 +57,6 @@ if __name__ == "__main__":
 
 
 # Feed-Forward NN
-# with 2 layers, [128, 128], test accuracies: 0.587, 0.587 avg loss: about 1.00 over 10 total epochs (5 + 5)
+# with 2 layers, [128, 128], test accuracies: 0.413
+# Avg loss: about 1.5 over 5 epochs
 # with 3 layers, [128, 192, 128], test accuracies: 0.352,0.337 avg loss: about 1.7 over 10 total epochs (5 + 5)
